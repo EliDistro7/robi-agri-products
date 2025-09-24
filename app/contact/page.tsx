@@ -44,13 +44,13 @@ export default function ContactPage() {
     {
       icon: Phone,
       title: 'Phone',
-      details: ['+255 123 456 789', '+255 987 654 321'],
+      details: ['+255 696 781 179'],
       description: 'Call us during business hours',
     },
     {
       icon: Mail,
       title: 'Email',
-      details: ['info@robiagri.co.tz', 'sales@robiagri.co.tz'],
+      details: ['info@robiagri.co.tz', 'sales@robiagri.com'],
       description: 'Send us an email anytime',
     },
     {

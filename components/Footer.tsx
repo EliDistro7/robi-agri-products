@@ -31,7 +31,7 @@ export default function Footer() {
                 <Instagram className="h-6 w-6" />
               </a>
               <a 
-                href="https://wa.me/255123456789" 
+                href="https://wa.me/255696781179" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-300 hover:text-emerald-400 transition-colors duration-200"
@@ -58,11 +58,11 @@ export default function Footer() {
             <div className="space-y-3">
               <div className="flex items-center">
                 <Phone className="h-5 w-5 text-emerald-400 mr-2" />
-                <span className="text-gray-300">+255 123 456 789</span>
+                <span className="text-gray-300">+255 696 781 179</span>
               </div>
               <div className="flex items-center">
                 <Mail className="h-5 w-5 text-emerald-400 mr-2" />
-                <span className="text-gray-300">info@robiagri.co.tz</span>
+                <span className="text-gray-300">info@robiagri.com</span>
               </div>
               <div className="flex items-start">
                 <MapPin className="h-5 w-5 text-emerald-400 mr-2 mt-1" />
