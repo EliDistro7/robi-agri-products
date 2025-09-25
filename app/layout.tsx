@@ -1,12 +1,34 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Montserrat, Roboto_Slab, Open_Sans } from 'next/font/google';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
 
-const inter = Inter({ subsets: ['latin'] });
+// Primary font for headings - Strong, modern, great for branding
+const montserrat = Montserrat({ 
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-montserrat',
+  display: 'swap',
+});
+
+// Secondary font for subheadings and emphasis - Professional, sturdy
+const robotoSlab = Roboto_Slab({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-roboto-slab',
+  display: 'swap',
+});
+
+// Body text font - Clean, readable, professional
+const openSans = Open_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-open-sans',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Robi Agri Products & Livestock Production - Tanzania',
@@ -24,7 +46,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${montserrat.variable} ${robotoSlab.variable} ${openSans.variable} font-sans`}>
         <LanguageProvider>
           <div className="min-h-screen flex flex-col">
             <Header />
