@@ -2,15 +2,14 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Menu, X, Globe, Leaf, Award, ChevronDown } from 'lucide-react';
+import { Menu, X, Globe, Leaf } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 export default function Header() {
   const { locale, setLocale, t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
 
   const navigation = [
     { name: t('home'), href: '/' },
@@ -18,22 +17,13 @@ export default function Header() {
     { name: t('products'), href: '/products' },
     { name: t('gallery'), href: '/gallery' },
     { name: t('news'), href: '/news' },
-    { name: t('licenses'), href: '/licenses' },
     { name: t('contact'), href: '/contact' },
   ];
 
-  const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'sw', name: 'Kiswahili', flag: '🇹🇿' }
-  ];
-
-  const currentLanguage = languages.find(lang => lang.code === locale) || languages[0];
-
   return (
-    <header className="bg-white/95 backdrop-blur-md shadow-lg border-b border-forest-100 sticky top-0 z-50 transition-all duration-300">
+    <header className="bg-white shadow-md sticky top-0 z-50">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          {/* Logo Section */}
+        <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center group">
               {/* Replace with actual logo when available */}
@@ -64,191 +54,74 @@ export default function Header() {
               </div>
             </Link>
           </div>
-
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1">
+          <div className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="relative px-4 py-2 text-sm font-medium text-forest-700 hover:text-forest-600 transition-all duration-200 rounded-lg hover:bg-forest-50 group"
+                className="text-gray-900 hover:text-emerald-600 px-3 py-2 text-sm font-medium transition-colors duration-200"
               >
-                <span className="relative z-10">{item.name}</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-forest-100 to-earth-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                {item.name}
               </Link>
             ))}
             
-            {/* Enhanced Language Switcher */}
-            <div className="relative ml-4">
-              <button
-                onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
-                className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-forest-700 hover:text-forest-600 hover:bg-forest-50 rounded-lg transition-all duration-200 border border-forest-200 hover:border-forest-300"
+            {/* Language Switcher */}
+            <div className="flex items-center space-x-2">
+              <Globe className="h-4 w-4 text-gray-600" />
+              <select
+                value={locale}
+                onChange={(e) => setLocale(e.target.value as 'en' | 'sw')}
+                className="text-sm border-none bg-transparent focus:outline-none cursor-pointer"
               >
-                <Globe className="h-4 w-4" />
-                <span className="text-lg">{currentLanguage.flag}</span>
-                <span className="hidden sm:inline">{currentLanguage.code.toUpperCase()}</span>
-                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isLanguageDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-              
-              {/* Language Dropdown */}
-              {isLanguageDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-forest-100 py-2 z-50">
-                  {languages.map((language) => (
-                    <button
-                      key={language.code}
-                      onClick={() => {
-                        setLocale(language.code as 'en' | 'sw');
-                        setIsLanguageDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center space-x-3 px-4 py-2 text-sm hover:bg-forest-50 transition-colors duration-150 ${
-                        locale === language.code ? 'bg-forest-50 text-forest-600 font-medium' : 'text-gray-700'
-                      }`}
-                    >
-                      <span className="text-lg">{language.flag}</span>
-                      <span>{language.name}</span>
-                      {locale === language.code && (
-                        <div className="ml-auto w-2 h-2 bg-forest-500 rounded-full"></div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* CTA Button */}
-            <div className="ml-4 pl-4 border-l border-forest-200">
-              <Link href="/contact">
-                <Button className="bg-gradient-to-r from-forest-600 to-forest-700 hover:from-forest-700 hover:to-forest-800 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                  Get Quote
-                </Button>
-              </Link>
+                <option value="en">EN</option>
+                <option value="sw">SW</option>
+              </select>
             </div>
           </div>
 
           {/* Mobile menu button */}
-          <div className="lg:hidden flex items-center space-x-2">
-            {/* Mobile Language Switcher */}
-            <button
-              onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
-              className="flex items-center space-x-1 px-2 py-1 text-sm text-forest-700 hover:bg-forest-50 rounded-md transition-colors duration-200"
-            >
-              <span className="text-base">{currentLanguage.flag}</span>
-              <span className="text-xs font-medium">{currentLanguage.code.toUpperCase()}</span>
-            </button>
-
+          <div className="md:hidden flex items-center">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 hover:bg-forest-50 rounded-lg transition-colors duration-200"
+              className="p-2"
             >
-              <div className="relative w-6 h-6">
-                <div className={`absolute inset-0 transition-all duration-300 ${isMenuOpen ? 'rotate-45 opacity-0' : 'rotate-0 opacity-100'}`}>
-                  <Menu className="h-6 w-6 text-forest-700" />
-                </div>
-                <div className={`absolute inset-0 transition-all duration-300 ${isMenuOpen ? 'rotate-0 opacity-100' : '-rotate-45 opacity-0'}`}>
-                  <X className="h-6 w-6 text-forest-700" />
-                </div>
-              </div>
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
           </div>
         </div>
 
-        {/* Enhanced Mobile Navigation */}
+        {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden border-t border-forest-100 bg-white/95 backdrop-blur-md">
-            <div className="px-4 py-4 space-y-2">
-              {navigation.map((item, index) => (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+              {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="block px-4 py-3 text-base font-medium text-forest-700 hover:text-forest-600 hover:bg-forest-50 rounded-lg transition-all duration-200 transform hover:translate-x-1"
+                  className="text-gray-900 hover:text-emerald-600 block px-3 py-2 text-base font-medium"
                   onClick={() => setIsMenuOpen(false)}
-                  style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <div className="flex items-center justify-between">
-                    <span>{item.name}</span>
-                    <div className="w-2 h-2 bg-forest-300 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                  </div>
+                  {item.name}
                 </Link>
               ))}
-              
-              {/* Mobile Language Options */}
-              <div className="pt-4 border-t border-forest-100 mt-4">
-                <p className="text-xs font-semibold text-forest-500 uppercase tracking-wider mb-3 px-4">
-                  Language
-                </p>
-                <div className="space-y-1">
-                  {languages.map((language) => (
-                    <button
-                      key={language.code}
-                      onClick={() => {
-                        setLocale(language.code as 'en' | 'sw');
-                        setIsMenuOpen(false);
-                      }}
-                      className={`w-full flex items-center space-x-3 px-4 py-3 text-base rounded-lg transition-all duration-200 ${
-                        locale === language.code 
-                          ? 'bg-forest-50 text-forest-600 font-medium' 
-                          : 'text-forest-700 hover:bg-forest-50 hover:text-forest-600'
-                      }`}
-                    >
-                      <span className="text-lg">{language.flag}</span>
-                      <span className="flex-1 text-left">{language.name}</span>
-                      {locale === language.code && (
-                        <div className="w-2 h-2 bg-forest-500 rounded-full"></div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Mobile CTA */}
-              <div className="pt-4 border-t border-forest-100 mt-4">
-                <Link href="/contact" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="w-full bg-gradient-to-r from-forest-600 to-forest-700 hover:from-forest-700 hover:to-forest-800 text-white py-3 rounded-lg font-medium transition-all duration-200 shadow-md">
-                    Get Quote
-                  </Button>
-                </Link>
+              <div className="flex items-center px-3 py-2 space-x-2">
+                <Globe className="h-4 w-4 text-gray-600" />
+                <select
+                  value={locale}
+                  onChange={(e) => setLocale(e.target.value as 'en' | 'sw')}
+                  className="text-sm border border-gray-300 rounded px-2 py-1"
+                >
+                  <option value="en">English</option>
+                  <option value="sw">Kiswahili</option>
+                </select>
               </div>
             </div>
           </div>
         )}
-
-        {/* Mobile Language Dropdown */}
-        {isLanguageDropdownOpen && (
-          <div className="lg:hidden absolute right-4 top-20 w-48 bg-white rounded-xl shadow-lg border border-forest-100 py-2 z-50">
-            {languages.map((language) => (
-              <button
-                key={language.code}
-                onClick={() => {
-                  setLocale(language.code as 'en' | 'sw');
-                  setIsLanguageDropdownOpen(false);
-                }}
-                className={`w-full flex items-center space-x-3 px-4 py-2 text-sm hover:bg-forest-50 transition-colors duration-150 ${
-                  locale === language.code ? 'bg-forest-50 text-forest-600 font-medium' : 'text-gray-700'
-                }`}
-              >
-                <span className="text-lg">{language.flag}</span>
-                <span>{language.name}</span>
-                {locale === language.code && (
-                  <div className="ml-auto w-2 h-2 bg-forest-500 rounded-full"></div>
-                )}
-              </button>
-            ))}
-          </div>
-        )}
       </nav>
-
-      {/* Click outside to close dropdowns */}
-      {(isLanguageDropdownOpen || isMenuOpen) && (
-        <div 
-          className="fixed inset-0 z-40" 
-          onClick={() => {
-            setIsLanguageDropdownOpen(false);
-            setIsMenuOpen(false);
-          }}
-        />
-      )}
     </header>
   );
 }
