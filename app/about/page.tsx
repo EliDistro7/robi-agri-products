@@ -10,7 +10,7 @@ export default function AboutPage() {
 
   const team = [
     {
-      name: 'Robi Amani',
+      name: 'Andrew Robinson Andrea',
       position: 'Founder & CEO',
       image: '/ceo.png',
       description: 'Over 20 years of experience in agricultural development and livestock management.',
