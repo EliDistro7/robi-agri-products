@@ -21,10 +21,46 @@ const PDFRenderer: React.FC<PDFRendererProps> = ({
   const [zoomLevel, setZoomLevel] = useState(75);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-hide loading after a reasonable time
+  // Intersection Observer to detect when component is in view
   React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            // Trigger load after a small delay to ensure smooth scrolling
+            setTimeout(() => {
+              setShouldLoad(true);
+            }, 200);
+            // Once we've triggered loading, we can disconnect
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        threshold: 0.1, // Trigger when 10% of the component is visible
+        rootMargin: '50px 0px', // Start loading 50px before it comes into view
+      }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  // Auto-hide loading after a reasonable time (only if shouldLoad is true)
+  React.useEffect(() => {
+    if (!shouldLoad) return;
+    
     const timer = setTimeout(() => {
       if (isLoading) {
         setIsLoading(false);
@@ -32,10 +68,12 @@ const PDFRenderer: React.FC<PDFRendererProps> = ({
     }, 3000); // Hide loading after 3 seconds
 
     return () => clearTimeout(timer);
-  }, [isLoading]);
+  }, [isLoading, shouldLoad]);
 
-  // Try to detect when iframe content is ready
+  // Try to detect when iframe content is ready (only if shouldLoad is true)
   React.useEffect(() => {
+    if (!shouldLoad) return;
+
     const checkIframeLoaded = () => {
       if (iframeRef.current) {
         try {
@@ -56,7 +94,7 @@ const PDFRenderer: React.FC<PDFRendererProps> = ({
 
     const timer = setTimeout(checkIframeLoaded, 1000);
     return () => clearTimeout(timer);
-  }, [pdfUrl]);
+  }, [pdfUrl, shouldLoad]);
 
   const handleZoomIn = () => {
     if (zoomLevel < 200) {
@@ -103,8 +141,17 @@ const PDFRenderer: React.FC<PDFRendererProps> = ({
     setIsLoading(false);
   };
 
+  const handleManualLoad = () => {
+    setShouldLoad(true);
+    setIsLoading(true);
+    setError(null);
+  };
+
   return (
-    <div className={`bg-white border border-earth-200 rounded-xl shadow-lg overflow-hidden ${className}`}>
+    <div 
+      ref={containerRef}
+      className={`bg-white border border-earth-200 rounded-xl shadow-lg overflow-hidden ${className}`}
+    >
       {/* Header */}
       <div className="bg-gradient-to-r from-forest-600 to-forest-700 p-4">
         <div className="flex items-center justify-between">
@@ -161,11 +208,26 @@ const PDFRenderer: React.FC<PDFRendererProps> = ({
 
       {/* PDF Viewer */}
       <div className="relative bg-earth-50 h-96">
-        {isLoading && !error && (
+        {(!shouldLoad || (isLoading && shouldLoad)) && !error && (
           <div className="absolute inset-0 flex items-center justify-center bg-earth-50/90 z-10">
             <div className="flex flex-col items-center space-y-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-forest-600"></div>
-              <p className="text-earth-600 font-body text-sm">Loading PDF...</p>
+              {!shouldLoad ? (
+                <>
+                  <FileText className="w-12 h-12 text-earth-400" />
+                  <p className="text-earth-600 font-body text-sm">PDF will load when scrolled into view</p>
+                  <button
+                    onClick={handleManualLoad}
+                    className="px-4 py-2 bg-forest-600 text-white text-sm rounded hover:bg-forest-700 transition-colors"
+                  >
+                    Load PDF Now
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-forest-600"></div>
+                  <p className="text-earth-600 font-body text-sm">Loading PDF...</p>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -194,7 +256,7 @@ const PDFRenderer: React.FC<PDFRendererProps> = ({
               </div>
             </div>
           </div>
-        ) : (
+        ) : shouldLoad ? (
           <iframe
             ref={iframeRef}
             src={`${pdfUrl}#zoom=${zoomLevel}&toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
@@ -207,7 +269,7 @@ const PDFRenderer: React.FC<PDFRendererProps> = ({
               minHeight: '384px'
             }}
           />
-        )}
+        ) : null}
       </div>
 
       {/* Status Bar */}
@@ -215,12 +277,12 @@ const PDFRenderer: React.FC<PDFRendererProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <span className="text-xs text-earth-700">
-              {error ? "Load Failed" : isLoading ? "Loading..." : "PDF Loaded"}
+              {error ? "Load Failed" : !shouldLoad ? "Ready to Load" : isLoading ? "Loading..." : "PDF Loaded"}
             </span>
           </div>
           
           <div className="flex items-center space-x-2">
-            {!error && !isLoading && (
+            {!error && !isLoading && shouldLoad && (
               <div className="flex items-center space-x-1">
                 <CheckCircle2 className="w-3 h-3 text-forest-600" />
                 <span className="text-[10px] text-forest-600 font-medium">Verified</span>
