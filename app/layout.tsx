@@ -44,18 +44,42 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Set to true to block access
+  const isSubscriptionActive = false;
+
   return (
     <html lang="en">
       <body className={`${montserrat.variable} ${robotoSlab.variable} ${openSans.variable} font-sans`}>
         <LanguageProvider>
-          <div className="min-h-screen flex flex-col">
-            <Header />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
-            <WhatsAppButton />
-          </div>
+          {!isSubscriptionActive ? (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
+              <div className="max-w-md w-full bg-white rounded-lg shadow-2xl p-8 text-center">
+                <div className="mb-6">
+                  <svg className="mx-auto h-16 w-16 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-4">
+                  Service Unavailable
+                </h1>
+                <p className="text-lg text-gray-700 mb-6">
+                  The web server is not subscribed for, try again later
+                </p>
+                <div className="text-sm text-gray-500">
+                  Please contact support for assistance
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
+              <WhatsAppButton />
+            </div>
+          )}
         </LanguageProvider>
       </body>
     </html>
