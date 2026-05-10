@@ -45,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   // Set to true to block access
-  const isSubscriptionActive = false;
+  const isSubscriptionActive = true;
 
   return (
     <html lang="en">
